@@ -3,6 +3,31 @@
 Notable changes, newest first. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## Unreleased
+
+### Fixed
+
+- The picture at the top of the README shows what the tool prints today. It had
+  said version 0.1.0, Access 56 grade D and three of six citation crawlers since
+  the first release, while the tool moved to 0.3.0, 67.2 grade C and five of
+  eleven. The file carried a comment claiming every number in it was a real
+  result, which made it worse rather than better
+
+### Added
+
+- `scripts/build_output_image.py`, which rewrites that picture from the recorded
+  run it is drawn from. The content is generated; which lines are worth showing
+  and where a list gets cut stay in the script as editorial choices. The three
+  tests in `tests/test_output_image.py` hold the picture, its alt text and the
+  README's copy of it to the recording, so this goes stale as a failing test
+  rather than as a wrong front page
+
+### Removed
+
+- `assets/output.png`. The README now points at the SVG it was rendered from,
+  which GitHub draws directly, as it already did for the banner. One artefact
+  instead of two, and no conversion step to forget
+
 ## v0.3.0 - 2026-09-05
 
 ### Added

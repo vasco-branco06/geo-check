@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vasco-branco06/geo-check/main/assets/output.png" alt="geo-check auditing nytimes.com: Access 56 out of 100 grade D, Readability 82.5 out of 100 grade B, three of six citation crawlers allowed, and the exact robots.txt lines to add." width="624">
+  <img src="https://raw.githubusercontent.com/vasco-branco06/geo-check/main/assets/output.svg" alt="geo-check auditing nytimes.com: Access 67.23 out of 100 grade C, Readability 82.5 out of 100 grade B, 5 of 11 citation crawlers allowed, and the exact robots.txt lines to add." width="624">
 </p>
 
 <p align="center">
