@@ -4,6 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/marketplace/actions/geo-check"><img src="https://img.shields.io/badge/GitHub%20Marketplace-geo--check-24292f?logo=github&logoColor=white" alt="On the GitHub Marketplace"></a>
+  <a href="https://pypi.org/project/geo-check/"><img src="https://img.shields.io/pypi/v/geo-check?logo=pypi&logoColor=white&color=1f6feb" alt="On PyPI"></a>
   <a href="https://github.com/vasco-branco06/geo-check/actions/workflows/ci.yml"><img src="https://github.com/vasco-branco06/geo-check/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
   <img src="https://img.shields.io/badge/licence-MIT-1f6feb" alt="MIT licence">
   <img src="https://img.shields.io/badge/python-3.10%2B-1f6feb" alt="Python 3.10 or newer">
@@ -36,14 +37,12 @@ npx skills add vasco-branco06/geo-check
 **As a command line tool**, which is also what the skill runs:
 
 ```bash
-pip install git+https://github.com/vasco-branco06/geo-check
+pip install geo-check
 geo-check your-domain.com
 ```
 
 Python 3.10 or newer and open network access. No API key, no account, no model
 call. It does not run inside sandboxes that only reach an allowlist of domains.
-
-> Not on PyPI yet, so the install comes from git for now.
 
 Or run it without installing anything: fork this repository, open the **Actions**
 tab, choose **audit a site** and press Run. The report lands in the run summary.
