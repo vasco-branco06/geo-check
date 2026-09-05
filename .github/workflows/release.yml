@@ -1,0 +1,68 @@
+name: release
+
+# Publishes to PyPI without a token existing anywhere. GitHub proves who it is
+# over OIDC, PyPI trusts that proof, and there is nothing to leak from a laptop
+# or a repository secret. The trusted publisher is configured once at
+# pypi.org/manage/account/publishing and names this file by its filename, so
+# renaming this workflow breaks publishing until that entry is updated too.
+
+on:
+  push:
+    # v0.3.0 yes, v0 no. The major tag moves forward with every release, and a
+    # second attempt to publish a version PyPI already has fails by design.
+    tags: ["v*.*.*"]
+  # The tag for a release that is already cut cannot fire a workflow that did
+  # not exist when it was pushed, so the first publish is a manual one.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # What lets the job prove its identity to PyPI. Without it there is no
+      # token and no proof, and nothing publishes.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      # A version on PyPI can never be replaced or corrected, only hidden. The
+      # easiest way to make that permanent mistake is to tag v0.4.0 while
+      # pyproject.toml still says 0.3.0, so refuse rather than publish it.
+      - name: Refuse to publish if the tag and the version disagree
+        run: |
+          version=$(python -c "import tomllib,pathlib; print(tomllib.loads(pathlib.Path('pyproject.toml').read_text())['project']['version'])")
+          echo "pyproject.toml says $version"
+          case "$GITHUB_REF" in
+            refs/tags/*)
+              tag="${GITHUB_REF#refs/tags/v}"
+              echo "the tag says $tag"
+              if [ "$tag" != "$version" ]; then
+                echo "::error::tag v$tag does not match version $version. Nothing published."
+                exit 1
+              fi
+              ;;
+            *)
+              echo "::warning::not running from a tag, so the version was not checked against one"
+              ;;
+          esac
+
+      # Built from what the tag holds rather than from whatever is in a local
+      # dist/ directory. twine check catches metadata that PyPI would reject
+      # after the upload has already started.
+      - name: Build and check the distributions
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m build
+          python -m twine check dist/*
+          ls -la dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.14.2
