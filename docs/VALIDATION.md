@@ -3,8 +3,9 @@
 What this document is: the evidence that `geo-check` does what it says. Not a
 study of the web. Every number here is about the tool.
 
-Measured 2026-08-31. The aggregation scripts are
-[scripts/run_study.py](../scripts/run_study.py) and
+The completion figures were measured 2026-08-31 and the agreement figures
+2026-09-06, against the agent list as it stood on each date. The aggregation
+scripts are [scripts/run_study.py](../scripts/run_study.py) and
 [scripts/verify_accuracy.py](../scripts/verify_accuracy.py), and both run offline
 against recorded responses, so this is reproducible rather than remembered.
 
@@ -54,7 +55,7 @@ counted as aborted and excluded from any claim about a site.
 ## The answers are right
 
 Every `robots.txt` in the corpus was read three ways and compared per agent,
-17025 verdicts across the 681 sites that have a real one. Of the other 225, 162
+21792 verdicts across the 681 sites that have a real one. Of the other 225, 162
 never reached `robots.txt` and 34 returned a non-200 for it. The remaining 29
 answered
 with HTTP 200 and a body carrying no directives: five served markup instead of
@@ -72,21 +73,29 @@ with no rules.
 | | Agreement with the tool |
 | --- | ---: |
 | Literal reader | 100.00% |
-| Standard library | 99.96% |
+| Standard library | 99.97% |
 
-The four standard library disagreements are all the same fault, and it is the
+The seven standard library disagreements are all the same fault, and it is the
 library's: it matches user agents by substring, so a site with a group named
 `Fetch`, aimed at a download manager, has that group applied to
-`Meta-ExternalFetcher`. The tool gets all four right.
+`Meta-ExternalFetcher`. The tool gets all seven right.
 
 **Three implementations agreeing proves consistency, not correctness.** So the
-work that actually establishes accuracy was done by hand: all 289 scoring block
-verdicts across 63 sites were traced to the `robots.txt` group that produced
-them, and none was unexplained. Scoring means the citation and user fetch
-buckets, 118 and 171 verdicts. The same 63 sites also block training crawlers 579
-times, which was not traced by hand, because a training block earns and costs
-nothing and cannot move a score. A separate sample of 25 sites the tool reports as fully
-open was checked for false negatives and found clean.
+work that actually establishes accuracy is done by hand, and this is where the
+scale of it has to be stated honestly rather than rounded up.
+
+289 scoring block verdicts across 63 sites were traced to the `robots.txt` group
+that produced them, and none was unexplained. That pass was made when the
+scoring buckets held eleven agents, in the 0.1.0 run. They now hold nineteen,
+and this run counts 470 such verdicts across 67 sites, 253 in citation and 217
+in user fetch. **The 181 the hand pass never reached carry the machine agreement
+and nothing more.** They are not folded into the traced total, because a number
+that mixes the two is worth less than either.
+
+The same 67 sites also block training crawlers 561 times, which was not traced
+by hand, because a training block earns and costs nothing and cannot move a
+score. A separate sample of 25 sites the tool reports as fully open was checked
+for false negatives and found clean.
 
 That distinction is the point. An automated agreement rate is easy to produce and
 easy to fool. The number worth trusting is the one a person checked.

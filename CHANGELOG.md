@@ -7,6 +7,19 @@ Notable changes, newest first. Format loosely follows
 
 ### Fixed
 
+- The accuracy figures cover the agent list that ships, not the one that shipped
+  a week ago. `data/accuracy_report.json` was measured against 25 agents and the
+  list now holds 32, so 17025 verdicts was being presented as every robots.txt
+  compared per agent while eight agents had never been through the harness. The
+  re-run puts it at 21792 verdicts, still 100 percent agreement with the
+  independent RFC 9309 reader and still zero disagreements
+- The hand traced count says what it covers. 289 scoring block verdicts were read
+  by a person when the scoring buckets held eleven agents; they now hold nineteen
+  and the run counts 470. The 181 the hand pass never reached are stated as
+  carrying machine agreement and nothing more, rather than folded into a bigger
+  number that would mean less
+- `docs/VALIDATION.md` said four standard library disagreements. There were seven
+  before this change and there are seven after, all the same substring fault
 - The picture at the top of the README shows what the tool prints today. It had
   said version 0.1.0, Access 56 grade D and three of six citation crawlers since
   the first release, while the tool moved to 0.3.0, 67.2 grade C and five of

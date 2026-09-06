@@ -219,8 +219,9 @@ carried the withheld comparison in its structure, with no sentence saying so.
 - [x] Categories assigned from the recorded homepage rather than from memory,
       which is what the six percent error rate on the first 500 cost
 - [x] Manifest, robustness, accuracy and study regenerated: 906 corpus, 744
-      scored, 162 aborted, 17025 verdicts at 100 percent agreement with the
-      independent reader, 289 scoring block verdicts across 63 sites
+      scored, 162 aborted, 21792 verdicts at 100 percent agreement with the
+      independent reader, 470 scoring block verdicts across 67 sites, of which
+      289 were traced by hand when the scoring buckets held eleven agents
 - [x] Every published figure updated across seven documents
 
 **What the larger sample did to the finding.** At 500 sites the two halves of

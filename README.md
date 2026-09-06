@@ -118,10 +118,10 @@ scores the same twice and a score you disagree with is an argument you can have.
 
 **Validated against 906 real sites, and the validation found bugs here first.**
 744 scored, zero crashes, and no abort without a reason. Every `robots.txt` was
-then read three ways and compared per agent, 17025 verdicts, agreeing 100 percent
+then read three ways and compared per agent, 21792 verdicts, agreeing 100 percent
 with an independent reader written from RFC 9309. Three implementations agreeing
-proves consistency and not correctness, so the 289 verdicts that carry a score
-were each traced by hand to the group that produced them.
+proves consistency and not correctness, so the verdicts that carry a score get
+read by a person: 289 of them have been, and `docs/VALIDATION.md` says which.
 
 It caught three real defects in this tool before anyone else could:
 

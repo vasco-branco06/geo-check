@@ -1,20 +1,20 @@
 {
-  "generated_at": "2026-08-31T07:14:50+00:00",
+  "generated_at": "2026-09-06T14:44:19+00:00",
   "corpus": 906,
   "compared": 681,
   "skipped": {
     "aborted": 162,
     "no robots.txt": 63
   },
-  "verdicts": 17025,
+  "verdicts": 21792,
   "tool_vs_literal": {
-    "agree": 17025,
+    "agree": 21792,
     "share": 100.0,
     "disagreements": []
   },
   "tool_vs_stdlib": {
-    "agree": 17018,
-    "share": 99.96,
+    "agree": 21785,
+    "share": 99.97,
     "note": "The standard library matches user agents by substring, so a group named bot captures GPTBot and a group named Fetch captures Meta-ExternalFetcher. Disagreements here are expected and are evidence for the tool. A disagreement the other way is a defect.",
     "disagreements": [
       {
@@ -80,6 +80,7 @@
     "sites_reporting_a_block": [
       "abcnews.go.com",
       "adage.com",
+      "adweek.com",
       "amazon.com",
       "androidcentral.com",
       "apnews.com",
@@ -113,6 +114,7 @@
       "netflix.com",
       "newyorker.com",
       "noticiasaominuto.com",
+      "notion.so",
       "npr.org",
       "observador.pt",
       "ourplace.com",
@@ -132,9 +134,11 @@
       "theregister.com",
       "theverge.com",
       "tomshardware.com",
+      "tumblr.com",
       "tvi.iol.pt",
       "usatoday.com",
       "viagens.sapo.pt",
+      "vidadecao.pt",
       "vidaeconomica.pt",
       "vox.com",
       "wired.com",
