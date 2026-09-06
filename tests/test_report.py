@@ -5,9 +5,8 @@ from one payload, so a run cannot describe itself three different ways.
 """
 
 import json
+import re
 from pathlib import Path
-
-import tomllib
 
 from geo_check import __version__
 from geo_check.checks import run_all
@@ -63,8 +62,12 @@ def test_the_package_does_not_describe_itself_two_different_ways():
     is the one the wheel is built from.
     """
     root = Path(__file__).resolve().parents[1]
-    packaged = tomllib.loads(root.joinpath("pyproject.toml").read_text(encoding="utf-8"))
-    assert __version__ == packaged["project"]["version"]
+    # Read with a regex rather than tomllib, which arrived in 3.11 while this
+    # package supports 3.10. CI caught that; a 3.14 laptop never would.
+    pyproject = root.joinpath("pyproject.toml").read_text(encoding="utf-8")
+    packaged = re.search(r'^version = "(.+?)"', pyproject, re.MULTILINE)
+    assert packaged, "pyproject.toml no longer states a version in the expected form"
+    assert __version__ == packaged.group(1)
 
 
 def test_the_payload_is_versioned_and_serialisable():
