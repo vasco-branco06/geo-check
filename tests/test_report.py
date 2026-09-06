@@ -5,7 +5,11 @@ from one payload, so a run cannot describe itself three different ways.
 """
 
 import json
+from pathlib import Path
 
+import tomllib
+
+from geo_check import __version__
 from geo_check.checks import run_all
 from geo_check.cli import collect_caps, render_text
 from geo_check.models import Category, CheckResult, PageContext, Severity, SiteContext
@@ -47,6 +51,20 @@ def make_payload(site=None):
     access = score_category(results, Category.ACCESS, caps=collect_caps(site))
     readability = score_category(results, Category.READABILITY)
     return build(site, results, access, readability)
+
+
+def test_the_package_does_not_describe_itself_two_different_ways():
+    """Same rule as this file's docstring, one level up.
+
+    The version was written down in three places and nothing compared them.
+    fetch.py said 0.1 for three releases while the JSON payload said 0.4.0, so
+    every audited site was told one version and every reader of the report
+    another. fetch.py now derives it, which leaves this pair, and pyproject.toml
+    is the one the wheel is built from.
+    """
+    root = Path(__file__).resolve().parents[1]
+    packaged = tomllib.loads(root.joinpath("pyproject.toml").read_text(encoding="utf-8"))
+    assert __version__ == packaged["project"]["version"]
 
 
 def test_the_payload_is_versioned_and_serialisable():

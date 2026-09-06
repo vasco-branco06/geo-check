@@ -22,7 +22,13 @@ from dataclasses import dataclass, field
 
 import httpx
 
-USER_AGENT = "geo-check/0.1 (+https://github.com/vasco-branco06/geo-check)"
+from . import __version__
+
+# Derived rather than written down. It said 0.1 for three releases while the
+# package reported 0.4.0 inside every report it wrote, so the same run told the
+# user one version and the site it was auditing another. SECURITY.md promises
+# this string identifies the tool honestly.
+USER_AGENT = f"geo-check/{__version__} (+https://github.com/vasco-branco06/geo-check)"
 TIMEOUT_SECONDS = 15.0
 MAX_RETRIES = 2
 MAX_BYTES = 5_000_000
