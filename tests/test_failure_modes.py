@@ -1,6 +1,6 @@
 """What the tool does when the input or the destination is wrong.
 
-Each of these four was found by running the tool rather than by reading it, and
+Each of these was found by running the tool rather than by reading it, and
 each one reached the user as a traceback, as silence, or as lost work. They are
 grouped because they share a shape: the audit itself was never the problem.
 """
@@ -53,3 +53,29 @@ def test_fewer_than_one_page_is_refused_instead_of_quietly_becoming_one():
     for refused in ("0", "-5"):
         with pytest.raises(argparse.ArgumentTypeError):
             _at_least_one(refused)
+
+
+def test_a_body_bigger_than_the_ceiling_stops_being_read(monkeypatch):
+    """SECURITY.md promises a byte ceiling and nothing checked it.
+
+    The promise is not that the text comes back short. It is that the read stops.
+    A site dripping a very large body must not be able to fill memory while the
+    tool waits politely for an end that never arrives, so this counts the chunks
+    the server was actually asked for.
+    """
+    monkeypatch.setattr("geo_check.fetch.MAX_BYTES", 1000)
+    served = 0
+
+    def body():
+        nonlocal served
+        for _ in range(10_000):
+            served += 1
+            yield b"x" * 100
+
+    transport = httpx.MockTransport(lambda request: httpx.Response(200, content=body()))
+    with httpx.Client(transport=transport) as client:
+        result = fetch("https://drip.example", client=client)
+
+    assert result.truncated is True
+    assert 1000 <= len(result.text) < 2000, len(result.text)
+    assert served < 50, f"the whole megabyte was pulled before the cap applied ({served})"
