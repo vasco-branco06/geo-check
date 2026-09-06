@@ -47,6 +47,32 @@ call. It does not run inside sandboxes that only reach an allowlist of domains.
 Or run it without installing anything: fork this repository, open the **Actions**
 tab, choose **audit a site** and press Run. The report lands in the run summary.
 
+## What using it looks like
+
+Someone says the company is not showing up in ChatGPT. Nobody knows whether that
+is a marketing problem or a robots.txt problem, and those have different owners.
+
+Ask Claude Code, in whatever words:
+
+> Is nytimes.com blocked from AI search?
+
+The skill runs the audit and answers with its reason. On `nytimes.com` today
+that reason is, trimmed only of the matched rule it prints beside each name:
+
+> 5 of 11 citation crawlers allowed. Blocked: OAI-SearchBot, Claude-SearchBot,
+> PerplexityBot, Meta-WebIndexer, DuckAssistBot, YouBot. Every crawler that
+> exists only to feed AI answers is blocked, while classic search crawlers still
+> get through. The site is reachable by Google and Bing and invisible to ChatGPT,
+> Claude and Perplexity.
+
+That is the finding this tool exists to produce, and it is not one a person
+spots by reading the file. Those six lines sit beside `GPTBot`, which is training
+and costs nothing, and beside `Googlebot`, which is allowed. Eighteen of the 906
+sites in the validation corpus are in exactly this state.
+
+You get the two scores, which of the 32 documented crawlers are blocked and by
+which line, and the robots.txt to paste. You do not get a model's opinion,
+because no model is in the scoring path.
 ## What GEO is, and why it matters
 
 Generative Engine Optimization. The question is no longer only whether Google
