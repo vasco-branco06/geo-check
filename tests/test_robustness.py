@@ -16,6 +16,8 @@ Record them with:
         --report data/robustness_report.json
 """
 
+import subprocess
+import sys
 from functools import cache
 from pathlib import Path
 
@@ -141,3 +143,61 @@ def test_no_site_produces_a_score_outside_zero_to_one_hundred():
         outcome, detail = audit(domain)
         if outcome == "scored":
             assert 0 <= float(detail) <= 100, (domain, detail)
+
+
+@slow
+@needs_fixtures
+def test_the_eighteen_the_documents_quote_is_still_eighteen():
+    """Three documents name a number that came out of a gitignored file.
+
+    README.md, docs/RUBRIC.md and the citation bucket note inside agents.json all
+    say eighteen sites are shut out of AI answers while classic search still gets
+    through. It came from data/study.json, which is deliberately not committed, so
+    no reader could check it and no test could read it. This recomputes it from
+    the recordings instead, and skips when they are not on disk.
+    """
+    from geo_check.models import Bucket
+    from geo_check.robots import classify
+
+    words = {17: "Seventeen", 18: "Eighteen", 19: "Nineteen", 20: "Twenty"}
+    blackouts = 0
+    for domain in RECORDED:
+        responses = load(FIXTURES, domain)["responses"]
+        body = next(
+            (
+                r.get("text")
+                for url, r in responses.items()
+                if url.rstrip("/").endswith("/robots.txt") and r.get("status") == 200
+            ),
+            None,
+        )
+        citation = [v for v in classify(body, "https://" + domain) if v.bucket is Bucket.CITATION]
+        ai_only = [v for v in citation if v.ai_only]
+        if ai_only and all(not v.allowed for v in ai_only) and any(v.allowed for v in citation):
+            blackouts += 1
+
+    assert blackouts in words, f"the count moved to {blackouts}, outside the range this test knows"
+    said = words[blackouts]
+    for path in (ROOT / "README.md", ROOT / "docs" / "RUBRIC.md"):
+        body = path.read_text(encoding="utf-8")
+        assert said in body, (
+            f"{path.name} should say {said} sites, the corpus now gives {blackouts}"
+        )
+
+
+@slow
+@needs_fixtures
+def test_the_manifest_still_reproduces_from_the_recordings():
+    """docs/VALIDATION.md promises this file rebuilds byte for byte.
+
+    It is the one artefact a reader without the 342 MB can use to check the
+    numbers, so a promise about it carries weight. Nothing verified it until the
+    script grew a --check mode.
+    """
+    done = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "build_manifest.py"), "--check"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert done.returncode == 0, done.stdout + done.stderr

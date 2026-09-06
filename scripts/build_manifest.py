@@ -1,6 +1,6 @@
 """Write data/corpus_manifest.csv, a fingerprint of every recorded response.
 
-The corpus fixtures are 208 MB and stay out of the repository, so the study's
+The corpus fixtures are 342 MB and stay out of the repository, so the study's
 numbers rest on recordings only one machine holds. This manifest is the part
 that fits: one row per domain, naming when it was read, what came back, and the
 SHA-256 of the robots.txt body.
@@ -18,8 +18,10 @@ exists rather than a line of documentation asking the reader to guess.
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
+import io
 import sys
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -86,7 +88,24 @@ def row_for(domain: str) -> dict[str, object]:
     return row
 
 
+def rendered(rows: list[dict[str, object]]) -> str:
+    """The manifest as text, so --check can compare it without writing it."""
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=FIELDS, lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    return buffer.getvalue()
+
+
 def main() -> int:
+    parser = argparse.ArgumentParser(description="Write data/corpus_manifest.csv.")
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Exit 1 if the committed manifest is not what the fixtures produce.",
+    )
+    args = parser.parse_args()
+
     domains = read_corpus(CORPUS)
     missing = [d for d in domains if not fixtures.path_for(FIXTURES, d).exists()]
     if missing:
@@ -94,11 +113,20 @@ def main() -> int:
         return 1
 
     rows = [row_for(domain) for domain in domains]
-    with MANIFEST.open("w", encoding="utf-8", newline="\n") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDS, lineterminator="\n")
-        writer.writeheader()
-        writer.writerows(rows)
+    wanted = rendered(rows)
 
+    # docs/VALIDATION.md promises this file reproduces byte for byte from the
+    # recordings. Nothing checked that until now, and an unchecked promise is
+    # what let three other generated files drift.
+    if args.check:
+        current = MANIFEST.read_text(encoding="utf-8") if MANIFEST.exists() else ""
+        if current == wanted:
+            print("data/corpus_manifest.csv is current.")
+            return 0
+        print("data/corpus_manifest.csv does not match the fixtures.", file=sys.stderr)
+        return 1
+
+    MANIFEST.write_text(wanted, encoding="utf-8", newline="\n")
     hashed = sum(1 for row in rows if row["robots_sha256"])
     size = MANIFEST.stat().st_size
     print(f"{len(rows)} domains, {hashed} with a hashed robots.txt, {size / 1024:.0f} KB")

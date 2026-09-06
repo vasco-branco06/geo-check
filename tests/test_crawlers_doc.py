@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 AGENTS = ROOT / "src" / "geo_check" / "data" / "agents.json"
 DOC = ROOT / "docs" / "CRAWLERS.md"
 README = ROOT / "README.md"
+RUBRIC = ROOT / "docs" / "RUBRIC.md"
 
 BUCKET_HEADINGS = {
     "citation": "## Citation crawlers",
@@ -90,3 +91,61 @@ def test_the_readme_states_the_real_number_of_agents():
     stated = re.search(r"^(\d+) user agents", README.read_text(encoding="utf-8"), re.MULTILINE)
     assert stated, "the README no longer states an agent count in the expected form"
     assert int(stated.group(1)) == expected
+
+
+WORDS = {
+    1: "one",
+    2: "two",
+    3: "three",
+    4: "four",
+    5: "five",
+    6: "six",
+    7: "seven",
+    8: "eight",
+    9: "nine",
+    10: "ten",
+    11: "eleven",
+    12: "twelve",
+    13: "thirteen",
+}
+
+
+def counts() -> dict[str, int]:
+    by_bucket = {b: 0 for b in BUCKET_HEADINGS}
+    ineffective = 0
+    for agent in agents():
+        by_bucket[agent["bucket"]] += 1
+        if agent["bucket"] == "user_fetch" and agent.get("obeys_robots", "yes") != "yes":
+            ineffective += 1
+    by_bucket["ineffective"] = ineffective
+    return by_bucket
+
+
+def test_the_prose_counts_agree_with_the_list_too():
+    """The tables are generated. The sentences around them are not.
+
+    docs/CRAWLERS.md is rewritten by a script, but only between the bucket
+    headings, so the sentence above the first table is hand written inside a
+    generated page. RUBRIC.md is hand written throughout. Both name numbers that
+    come from agents.json and neither recomputes them, which is the failure that
+    produced four stale documents in one week.
+    """
+    n = counts()
+    # RUBRIC.md names four training crawlers and then counts the rest.
+    named = 4
+    wanted = [
+        (
+            DOC,
+            f"{n['ineffective']} of the {n['user_fetch']} on demand fetchers",
+        ),
+        (RUBRIC, f"`CCBot` and {n['training'] - named} others"),
+        (RUBRIC, f"Split evenly across the {n['citation']}."),
+        (RUBRIC, f"Split evenly across the {n['user_fetch']},"),
+        (
+            RUBRIC,
+            f"{WORDS[n['citation'] - 1].capitalize()} of {WORDS[n['citation']]} allowed earns",
+        ),
+    ]
+    for path, phrase in wanted:
+        body = path.read_text(encoding="utf-8")
+        assert phrase in body, f"{path.name} should say {phrase!r}"
