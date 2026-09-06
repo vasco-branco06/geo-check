@@ -170,12 +170,13 @@ here, correctly, because the crawler does get the text.
 
 ## A weakness that was stated here, and then fixed
 
-**The user fetch bucket used to count blocks that do not work.** Three of the
-five agents in it are documented by their own vendors as ignoring robots.txt:
-`Perplexity-User` and `ChatGPT-User` explicitly, and `Meta-ExternalFetcher` for
-user initiated requests. A `Disallow` aimed at them changes nothing, and until
-0.2.0 the site lost points for it anyway. This paragraph said so, and said that
-scoring only the agents which honour robots.txt would give a truer number.
+**The user fetch bucket used to count blocks that do not work.** The bucket held
+five agents then, and three of them were documented by their own vendors as
+ignoring robots.txt: `Perplexity-User` and `ChatGPT-User` explicitly, and
+`Meta-ExternalFetcher` for user initiated requests. A `Disallow` aimed at them
+changes nothing, and until 0.2.0 the site lost points for it anyway. This
+paragraph said so, and said that scoring only the agents which honour robots.txt
+would give a truer number.
 
 It now does. An agent that ignores robots.txt counts as reachable whatever the
 file says, and only a block that works costs points. Replaying the corpus put a

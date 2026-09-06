@@ -149,3 +149,32 @@ def test_the_prose_counts_agree_with_the_list_too():
     for path, phrase in wanted:
         body = path.read_text(encoding="utf-8")
         assert phrase in body, f"{path.name} should say {phrase!r}"
+
+
+# The tokens a group named `bot` would have captured by substring, listed in
+# docs/VALIDATION.md and CLAUDE.md. The README counts how many of them are
+# citation crawlers, and that count is a property of agents.json, not of prose.
+SUBSTRING_VICTIMS = (
+    "GPTBot",
+    "Googlebot",
+    "Bingbot",
+    "PerplexityBot",
+    "OAI-SearchBot",
+    "Claude-SearchBot",
+)
+
+
+def test_the_readme_counts_the_substring_victims_by_bucket():
+    """The README said six citation crawlers and `GPTBot` is a training crawler.
+
+    It sat in a table about parsing defects, which is the worst place to keep one.
+    Nothing had ever compared that sentence to the buckets it describes.
+    """
+    bucket = {a["token"]: a["bucket"] for a in agents()}
+    missing = [t for t in SUBSTRING_VICTIMS if t not in bucket]
+    assert not missing, f"agents.json no longer carries {missing}"
+
+    citation = sum(1 for t in SUBSTRING_VICTIMS if bucket[t] == "citation")
+    phrase = f"{WORDS[citation]} citation crawlers"
+    body = README.read_text(encoding="utf-8")
+    assert phrase in body, f"README.md should say {phrase!r}"

@@ -127,7 +127,7 @@ It caught three real defects in this tool before anyone else could:
 
 | Defect | What it would have done |
 | --- | --- |
-| User agents matched by substring | A site writing `User-agent: bot` would have silently blocked six citation crawlers at once |
+| User agents matched by substring | A site writing `User-agent: bot` would have silently blocked five citation crawlers and `GPTBot` in one line |
 | Groups declaring the same agent not merged | A site that contradicts itself got the first rule instead of the merge RFC 9309 requires |
 | A bare `Crawl-delay` closing nothing | One site's `CCBot` inherited a `Disallow` aimed at a marketing crawler |
 
@@ -253,8 +253,9 @@ registry.
 pip install -e ".[dev]" && pytest
 ```
 
-189 tests, offline, under half a minute, covering 91 percent of the package.
-The suite never touches the network, and CI prints the coverage on every run.
+Offline, under half a minute, and it never touches the network. It includes the
+golden set of thirty sites verified by hand, which require 100 percent. CI
+prints the coverage on every run.
 [CONTRIBUTING.md](https://github.com/vasco-branco06/geo-check/blob/main/CONTRIBUTING.md)
 has the rest: how a check is written, how the golden set works, how to record
 fixtures, and why the recorder is deliberately slow.

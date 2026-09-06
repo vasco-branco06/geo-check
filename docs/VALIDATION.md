@@ -193,7 +193,7 @@ pip install -e ".[dev]"
 pytest
 ```
 
-The offline suite, including the golden set. 189 tests, under half a minute,
+The offline suite, including the golden set of thirty. Under half a minute,
 no network.
 
 ```bash
