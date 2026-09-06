@@ -3,25 +3,26 @@
 Living state of the project. Update at the end of every session. Keep it short.
 Decisions live in `CLAUDE.md`, progress lives here.
 
-Last updated: 2026-08-30. Current phase: 6 closed except publication.
+Last updated: 2026-09-06. Shipped: 0.4.0, on PyPI and the GitHub
+Marketplace. Every phase closed. One item open, at the bottom.
 
 ## Phase 0, decisions. DONE
 
 Scope, name, rubric, buckets, output format and testing strategy are closed and
 recorded in `CLAUDE.md`. Repository scaffold created.
 
-## Phase 1, robots.txt and the Access score. IN PROGRESS
+## Phase 1, robots.txt and the Access score. DONE
 
 Goal: `geo-check example.com` reads robots.txt, classifies every agent into its
 bucket, and prints an Access score with a letter grade.
 
-- [ ] `fetch.py`: HTTP layer with timeouts, retries, a polite identifying
+- [x] `fetch.py`: HTTP layer with timeouts, retries, a polite identifying
       user-agent, and a typed failure reason on every error path
-- [ ] `robots.py`: protego wrapper, fake robots.txt detection, per-agent verdict
-- [ ] `checks/access_*.py`: one file per Access criterion
-- [ ] `scoring.py`: already written, verify against the rubric
-- [ ] `cli.py`: minimal command, text output only
-- [ ] Manual run against 5 sites known by hand, including one that blocks
+- [x] `robots.py`: protego wrapper, fake robots.txt detection, per-agent verdict
+- [x] `checks/access_*.py`: one file per Access criterion
+- [x] `scoring.py`: already written, verify against the rubric
+- [x] `cli.py`: minimal command, text output only
+- [x] Manual run against 5 sites known by hand, including one that blocks
       everything and one with no robots.txt
 
 Done when: the Access score is correct on those 5 sites and every failure path
@@ -131,7 +132,7 @@ Done when: the floor is met. One line install that works first time, README with
 the output near the top, MIT licence, and the tool not crashing on the first site
 someone tries. Met.
 
-## Phase 6, validation and launch. VALIDATED, NOT PUBLISHED
+## Phase 6, validation and launch. DONE
 
 - [x] Ran the tool across the corpus, now 500 sites, and collected the numbers
       (`scripts/run_study.py`, aggregate in `data/study.json`, untracked)
@@ -231,22 +232,59 @@ shrink, it reversed, which is what a difference that was never there looks like.
 Publishing at 500 would have published a false result in a confident tone. What
 the halves are, and what the comparison shows, stays with the maintainer.
 
+## Phase 8, published, and the list caught up with the vendors. DONE
+
+- [x] On PyPI as `geo-check`, published by `.github/workflows/release.yml` over
+      OIDC. No token exists on a laptop or in a repository secret, and a tag
+      that disagrees with `pyproject.toml` is refused rather than uploaded.
+      0.2.0, 0.3.0 and 0.4.0 shipped on 5 and 6 September
+- [x] The agent list went from 25 to 32. Meta, Mistral, Amazon, DuckDuckGo and
+      You.com each run a citation crawler this project had never heard of, and
+      three on demand fetchers from Amazon and Google are documented as ignoring
+      robots.txt while Google was represented here as honouring it everywhere.
+      `cohere-ai` came out: Cohere now publishes a page saying it runs no
+      crawler. Every addition carries the vendor's own documentation URL
+- [x] The user fetch bucket stopped counting blocks that do not work, which had
+      been written up as a known weakness since the first release. Measured
+      first: 53 of 744 scored sites changed and 26 changed letter
+- [x] Content signals read and reported, never scored
+- [x] Four failure modes that reached the user as a traceback, as silence, or as
+      an audit thrown away after it finished
+
+**What measurement caught before it shipped.** Marking all five new citation
+crawlers as AI only would have taken the blackout detection, the failure this
+tool exists to find, from 18 sites in the corpus to 4. Not because anything
+opened up, but because the condition asks for every AI only crawler to be
+blocked and nobody blocks one they have never heard of. The flag was narrowed
+instead, and the detection held at 18.
+
+**The documentation was wrong where the code was right.** `SKILL.md` named three
+fetchers whose blocks do nothing when six do, and the sentence after that list
+tells an assistant not to advise changing a rule aimed at them. The tool has
+always left all six out of the robots.txt it offers; the file would have made an
+assistant override it. A test now fails when `SKILL.md` does not name them all.
+
+**Three files claimed to be generated and were not.** `docs/CRAWLERS.md`, the
+terminal image, and then the banner and the social card, all carrying figures
+from releases ago. Two now have generators with a `--check` mode, the images are
+held to the recording by tests, and CI runs both checks, because a hand edit
+passes `pytest` and fails `--check`. CI also runs on Windows now, and prints
+coverage without failing on it.
+
+**The accuracy figures were measured against a list that no longer shipped.**
+17025 verdicts covered 25 agents while 32 were shipping. Re-run at 21792, still
+100 percent agreement with the independent RFC 9309 reader. The hand traced
+count says what it covers rather than what would sound better: 289 of 470.
 ## Open items
 
-- **The user fetch bucket counts blocks that do not work.** Three of its five
-  agents, `ChatGPT-User`, `Perplexity-User` and `Meta-ExternalFetcher`, are
-  documented by their own vendors as ignoring robots.txt. The rubric still
-  counts a block aimed at them. Written up in `docs/RUBRIC.md` as a known
-  weakness rather than silently fixed, because changing the rubric is the
-  maintainer's call. Scoring only the agents that honour robots.txt would give a
-  truer number.
-- **Publish to PyPI.** Needs `twine` and a PyPI token, which is the maintainer's
-  to handle. The name is free and the wheel builds and installs clean.
-- **Make the repository public.** It goes up private. Flipping it is one click.
 - **Rename the working directory** from `geo-audit` to `geo-check`. Breaks the
-  virtual environment, which has to be recreated.
+  virtual environment, which has to be recreated, and Windows holds the current
+  directory open while a session is running.
 
-Closed since these were written: the name (`geo-check`), the agent list
-verification (all 25 checked against vendor documentation in phase 1), the
-corpus (built and recorded in phase 4), and the JavaScript threshold
-(measured across 22 pages in phase 2, recorded in `data/js_calibration.csv`).
+Closed in phase 8: the user fetch bucket counting blocks that do not work, PyPI
+publication, and making the repository public.
+
+Closed earlier: the name (`geo-check`), the agent list verification (checked
+against vendor documentation in phase 1 and again in phase 8), the corpus (built
+and recorded in phase 4), and the JavaScript threshold (measured across 22 pages
+in phase 2, recorded in `data/js_calibration.csv`).
