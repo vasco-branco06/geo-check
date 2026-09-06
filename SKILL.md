@@ -71,9 +71,13 @@ search and blocking it removes the site from them. Most people who think they
 opted out of training have done exactly that and no more, which is fine, and
 some have taken search down with it, which is usually not what they meant.
 
-**Some blocks do not work and the report says which.** `Perplexity-User`,
-`ChatGPT-User` and `Meta-ExternalFetcher` are documented by their own vendors as
-ignoring robots.txt. Do not tell the user to change a rule aimed at those.
+**Some blocks do not work and the report says which.** Six of the eight on
+demand fetchers are documented by their own vendors as not honouring robots.txt:
+`ChatGPT-User`, `Perplexity-User`, `Meta-ExternalFetcher`, `Amzn-User`,
+`Google-GeminiNotebook` and `Google-Agent`. Do not tell the user to change a rule
+aimed at those. The report marks them, and the robots.txt it offers to paste
+leaves them out, so follow the report rather than this list if the two ever
+disagree.
 
 **A run that aborts is not a failure of the tool.** A 401, 403 or a 202
 challenge on the homepage is a block above robots.txt, at the CDN or bot manager.

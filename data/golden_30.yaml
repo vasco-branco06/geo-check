@@ -14,9 +14,10 @@
 # Two shapes from the original list are missing, and both absences are findings
 # rather than gaps in the search.
 #
-# Citation blocked with training left open was not found in the 54 site sample.
+# Citation blocked with training left open was not found in the 54 site sample
+# the set was chosen from.
 #
-# All six citation crawlers blocked was not found either, because blocking
+# Every citation crawler blocked was not found either, because blocking
 # Googlebot means leaving classic search as well, and almost nobody does that.
 # A mutation test confirmed the consequence: changing CAP_ALL_CITATION_BLOCKED
 # does not break any entry here, only the unit tests. The twenty point cap is

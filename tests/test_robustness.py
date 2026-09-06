@@ -125,7 +125,7 @@ def test_the_whole_corpus_completes_or_says_why():
 def test_enough_of_the_corpus_actually_scores_to_support_a_study():
     """Not a claim about the tool. A floor under the sample the study rests on.
 
-    Measured at 81 percent over a 42 domain spread. The floor is set well below
+    Measured at 82.1 percent across the 906. The floor is set well below
     that so a bad week on the open web does not turn into a red test, but low
     enough that a real collapse in coverage is noticed.
     """

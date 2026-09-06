@@ -10,12 +10,20 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        # One Windows entry rather than the whole matrix again. The risk here is
+        # a path separator or a line ending, which is a property of the platform
+        # and not of the interpreter version, and .gitattributes marks the
+        # fixtures byte exact precisely because of it.
+        include:
+          - os: windows-latest
+            python-version: "3.12"
     steps:
       - uses: actions/checkout@v7
 
@@ -36,7 +44,28 @@ jobs:
       # golden set of thirty hard sites. It never touches the network, so CI
       # cannot be flaky because someone else's robots.txt changed.
       - name: Test
-        run: pytest -q
+        run: pytest -q --cov=geo_check --cov-report=term-missing:skip-covered
+
+  generated:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev]"
+
+      # docs/CRAWLERS.md and assets/output.svg say they are generated from
+      # something else. The suite checks their shape; only these check them byte
+      # for byte, which is what catches a hand edit that keeps the shape and
+      # changes the meaning. Three files drifted that way before this existed.
+      - name: The generated files are current
+        run: |
+          python scripts/build_crawlers_doc.py --check
+          python scripts/build_output_image.py --check
 
   build:
     runs-on: ubuntu-latest

@@ -150,7 +150,7 @@ hand to the `robots.txt` group that produced it. Two shapes from the original
 list are absent, and both absences are findings rather than gaps in the search;
 the file says which and why.
 
-`pytest` runs the whole suite offline in about twenty five seconds and never touches
+`pytest` runs the whole suite offline in under half a minute and never touches
 the network.
 
 ## What this does not prove
@@ -177,10 +177,11 @@ claim here is dated, and
 [data/corpus_manifest.csv](../data/corpus_manifest.csv) carries the SHA-256 of
 each one as it was read, so a change is visible rather than assumed.
 
-**That blocking a fetcher achieves anything.** `Perplexity-User`, `ChatGPT-User`
-and `Meta-ExternalFetcher` are documented by their own vendors as ignoring
-`robots.txt`. The tool reports that plainly, and the rubric still counts the
-block, which is a known weakness written up rather than buried.
+**That blocking a fetcher achieves anything.** Six of the eight on demand
+fetchers are documented by their own vendors as not honouring `robots.txt`. The
+tool reports that plainly, and since 0.2.0 the rubric stops counting those
+blocks, so a site is no longer marked down for a rule that does nothing.
+[RUBRIC.md](RUBRIC.md) carries the measurement that preceded the change.
 
 ## Reproducing it
 
@@ -192,7 +193,7 @@ pip install -e ".[dev]"
 pytest
 ```
 
-The offline suite, including the golden set. 178 tests, about twenty five seconds,
+The offline suite, including the golden set. 189 tests, under half a minute,
 no network.
 
 ```bash

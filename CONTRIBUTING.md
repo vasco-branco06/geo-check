@@ -48,7 +48,9 @@ pip install -e ".[dev]"
 pytest
 ```
 
-About twenty five seconds, offline, no network. It includes the golden set of thirty hard
+Under half a minute, offline, no network, and CI reports coverage on every run
+without failing on it, because a number to chase is not the same as a number
+worth knowing. It includes the golden set of thirty hard
 sites replayed from committed fixtures, and those require 100 percent: if one
 fails, read the `robots.txt` in the fixture before touching the expectation. The
 point of that file is that it is harder to change than the code.
@@ -69,7 +71,7 @@ and truncating it was measured and rejected.
 python scripts/refresh_fixtures.py --out tests/fixtures/corpus
 ```
 
-That touches the live web and takes about forty minutes. Be polite: it defaults
+That touches the live web and takes about ninety minutes. Be polite: it defaults
 to four domains at a time with staggered starts, and it defaults that way because
 eight was enough to have a CDN answer 429 to a whole batch for half an hour. A
 sweep is a request pattern and the pattern gets measured along with the sites.
@@ -106,9 +108,11 @@ then checked against the title and meta description in its recorded homepage.
 challenge page, so there was nothing recorded to check against. Three of the 193
 were wrong and were corrected: `owala.com` is a
 WordPress blog rather than the drinkware brand, `haus.com` sells home equity
-rather than goods, and `siete.com` is an online casino. That is a 1.6 percent
-error rate on the part that could be checked, and about a quarter of the file
-rests on judgement the recordings cannot confirm either way.
+rather than goods, and `siete.com` is an online casino. Reading every row back
+against its recorded homepage, rather than only the 193 with a usable title, put
+31 of the first 500 wrong. Six percent, and that is a floor rather than a
+measurement: the same judgement did the assigning and the checking, and about a
+fifth of the corpus has no usable recording to check against either way.
 
 The boundaries are not sharp and no rule will make them sharp. A marketplace can
 be read as ecommerce or as a platform, a direct-to-consumer brand as ecommerce or

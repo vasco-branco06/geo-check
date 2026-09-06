@@ -1,12 +1,12 @@
 """User fetch crawlers allowed. 20 points.
 
 These retrieve a single page when someone pastes a link into an assistant or
-asks about a URL. Three of the five are documented by their own vendors as
-ignoring robots.txt, so a Disallow aimed at them changes nothing in practice
+asks about a URL. Six of the eight are documented by their own vendors as not
+honouring robots.txt, so a Disallow aimed at them changes nothing in practice
 and no longer changes the score either.
 
-Until 0.2.0 all five counted, and a site lost points for a block that did not
-work. The rubric had said in writing that this was wrong before it was fixed.
+Until 0.2.0 every one of them counted, and a site lost points for a block that
+did not work. The rubric had said in writing that this was wrong before it was fixed.
 Replaying the corpus put a number on it: of 744 scored sites, 61 block at least
 one of these agents, 53 scored differently once ineffective blocks stopped
 counting, and 26 of those changed letter grade.

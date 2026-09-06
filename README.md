@@ -253,7 +253,8 @@ registry.
 pip install -e ".[dev]" && pytest
 ```
 
-178 tests, offline, about twenty five seconds. The suite never touches the network.
+189 tests, offline, under half a minute, covering 91 percent of the package.
+The suite never touches the network, and CI prints the coverage on every run.
 [CONTRIBUTING.md](https://github.com/vasco-branco06/geo-check/blob/main/CONTRIBUTING.md)
 has the rest: how a check is written, how the golden set works, how to record
 fixtures, and why the recorder is deliberately slow.

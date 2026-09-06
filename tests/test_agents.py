@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 
+SKILL = Path(__file__).resolve().parents[1] / "SKILL.md"
 AGENTS_PATH = Path(__file__).resolve().parents[1] / "src" / "geo_check" / "data" / "agents.json"
 AGENTS = json.loads(AGENTS_PATH.read_text(encoding="utf-8"))
 
@@ -49,3 +50,45 @@ def test_nothing_undocumented_carries_a_score():
     for agent in AGENTS["agents"]:
         if agent.get("undocumented"):
             assert agent["bucket"] == "training", agent["token"]
+
+
+def test_the_skill_names_every_block_that_does_not_work():
+    """SKILL.md tells an assistant which blocks are decorative, by name.
+
+    It named three when there were six, having missed the two Google fetchers
+    and Amazon's, all added with vendor documentation saying they ignore the
+    file. The sentence right after that list is an instruction not to advise
+    changing a rule aimed at them, so a stale list is not untidy, it is the
+    tool giving the advice it exists to prevent.
+    """
+    said = SKILL.read_text(encoding="utf-8")
+    ineffective = [
+        a["token"]
+        for a in AGENTS["agents"]
+        if a["bucket"] == "user_fetch" and a.get("obeys_robots", "yes") != "yes"
+    ]
+
+    missing = [t for t in ineffective if t not in said]
+    assert not missing, f"SKILL.md does not name {missing} among the blocks that do nothing"
+
+
+def test_the_skill_counts_them_correctly():
+    total = sum(1 for a in AGENTS["agents"] if a["bucket"] == "user_fetch")
+    ineffective = sum(
+        1
+        for a in AGENTS["agents"]
+        if a["bucket"] == "user_fetch" and a.get("obeys_robots", "yes") != "yes"
+    )
+    words = {
+        3: "Three",
+        4: "Four",
+        5: "Five",
+        6: "Six",
+        7: "Seven",
+        8: "Eight",
+        9: "Nine",
+        10: "Ten",
+    }
+    wanted = f"{words[ineffective]} of the {words[total].lower()}"
+    said = SKILL.read_text(encoding="utf-8")
+    assert wanted in said, f"SKILL.md should say {wanted!r}"
