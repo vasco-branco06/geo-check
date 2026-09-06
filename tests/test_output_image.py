@@ -94,8 +94,6 @@ def test_every_picture_that_names_the_site_carries_its_current_numbers():
         # score in the terminal one, so either shape counts.
         letter = access["letter"]
         carried = any(el == letter or el.endswith(f"  {letter}") for el in elements(body))
-        assert carried or f"grade {letter}" in body, (
-            f"{svg.name} does not carry the grade {letter}"
-        )
+        assert carried or f"grade {letter}" in body, f"{svg.name} does not carry the grade {letter}"
 
     assert len(checked) == 3, f"expected three pictures quoting the run, found {checked}"
