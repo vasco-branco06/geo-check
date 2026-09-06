@@ -85,6 +85,11 @@ python scripts/build_manifest.py
 It writes `data/corpus_manifest.csv`, one row per domain with the read timestamp,
 the outcome and the SHA-256 of the `robots.txt` body.
 
+`--check` writes nothing and exits 1 when the committed file is not what the
+recordings produce. `docs/VALIDATION.md` promises that file rebuilds byte for
+byte, and a promise nothing tests is how three other generated files drifted.
+It cannot run in CI, which has no fixtures, so `pytest -m slow` runs it.
+
 ## Site type
 
 `data/corpus_categories.csv` maps each of the 906 domains to one of eleven types:

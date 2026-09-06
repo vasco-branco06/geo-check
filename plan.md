@@ -275,6 +275,26 @@ coverage without failing on it.
 17025 verdicts covered 25 agents while 32 were shipping. Re-run at 21792, still
 100 percent agreement with the independent RFC 9309 reader. The hand traced
 count says what it covers rather than what would sound better: 289 of 470.
+
+**The same defect had four more places to hide.** A generated page can still
+carry a hand written sentence: the line above the first table in
+`docs/CRAWLERS.md` counts the fetchers whose blocks do nothing, and the
+generator only rewrites the tables. `docs/RUBRIC.md` names four more counts and
+is hand written throughout. All were right and none were held to `agents.json`,
+so a test now reads both files back against it. The eighteen blackout sites were
+worse: three documents quote a figure that came out of `data/study.json`, which
+is gitignored by an earlier decision, so no reader could check it and no test
+could read it. It is recomputed from the recordings now, and skipped when they
+are not on disk. `scripts/build_manifest.py` was the last generator without a
+`--check`, against a promise in `docs/VALIDATION.md` that it rebuilds byte for
+byte.
+
+**And the byte ceiling was a promise with nothing behind it.** `SECURITY.md`
+says a slow drip of a very large body cannot exhaust memory. `MAX_BYTES` was in
+`fetch.py` and nothing verified it. The test serves a megabyte in chunks and
+counts how many the server was asked for, because a cap applied after reading
+everything would satisfy a shorter test and none of the promise.
+
 ## Open items
 
 - **Rename the working directory** from `geo-audit` to `geo-check`. Breaks the
