@@ -3,10 +3,24 @@
 Notable changes, newest first. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## Unreleased
+## v0.4.0 - 2026-09-06
 
 ### Fixed
 
+- The skill no longer gives the advice it exists to prevent. `SKILL.md` told an
+  assistant that three on demand fetchers ignore robots.txt, and the sentence
+  after that list says not to advise changing a rule aimed at them. Six of the
+  eight ignore it; the three missing were Amazon's and Google's two, added in
+  0.3.0 with the vendors' own pages saying so. The same count was wrong in the
+  check's docstring, and both ship inside the wheel. A test now fails when
+  `SKILL.md` does not name every fetcher whose block does nothing
+- `docs/VALIDATION.md` said the rubric still counts those blocks. It stopped in
+  0.2.0 and `docs/RUBRIC.md` has said so since, so a reader who opened both had
+  no way to tell which was true
+- Numbers that had drifted apart: 178 tests against 189, forty minutes against
+  ninety for the same script, and a 1.6 percent category error rate that
+  `CLAUDE.md` had already corrected to a six percent floor and `CONTRIBUTING.md`
+  never heard about
 - The accuracy figures cover the agent list that ships, not the one that shipped
   a week ago. `data/accuracy_report.json` was measured against 25 agents and the
   list now holds 32, so 17025 verdicts was being presented as every robots.txt
@@ -40,6 +54,18 @@ Notable changes, newest first. Format loosely follows
 - `assets/output.png`. The README now points at the SVG it was rendered from,
   which GitHub draws directly, as it already did for the banner. One artefact
   instead of two, and no conversion step to forget
+
+### Changed
+
+- CI runs both `--check` modes. Three generated files went stale in one week and
+  the suite caught none of them, because the tests check shape and `--check`
+  checks bytes. A hand edit to one line of `docs/CRAWLERS.md` passes `pytest` and
+  fails `--check`, which is the gap
+- CI runs on Windows as well as Linux, for one interpreter version. The risk is a
+  path separator or a line ending, which is a property of the platform rather
+  than of the Python, and `.gitattributes` marks the fixtures byte exact because
+  of it
+- Coverage is measured and printed, and nothing fails on it. 91 percent today
 
 ## v0.3.0 - 2026-09-05
 

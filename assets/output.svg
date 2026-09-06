@@ -12,7 +12,7 @@
 <circle cx="56" cy="15" r="5" fill="#28c840"/>
 <text x="312" y="19" fill="#8b949e" text-anchor="middle" style="font-size:11px">geo-check</text>
 <text x="26.0" y="46" fill="#3fb950" font-weight="600">$ geo-check nytimes.com</text>
-<text x="26.0" y="88" fill="#c9d1d9" font-weight="600">geo-check 0.3.0   nytimes.com</text>
+<text x="26.0" y="88" fill="#c9d1d9" font-weight="600">geo-check 0.4.0   nytimes.com</text>
 <text x="26.0" y="109" fill="#8b949e">https://www.nytimes.com/   5 pages sampled</text>
 <text x="26.0" y="151" fill="#c9d1d9">  ACCESS        </text>
 <text x="160.7" y="151" fill="#d29922" font-weight="600">67.23/100  C</text>
