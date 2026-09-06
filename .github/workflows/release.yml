@@ -66,3 +66,40 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@v1.14.2
+
+  # v0 is what README.md hands people and what the Marketplace serves, and until
+  # now only a person moved it. Once nobody did: it sat 7 commits behind, serving
+  # a USER_AGENT carrying the old account name, which was exactly what the newer
+  # commit existed to remove. The comment at the top of this file has always said
+  # the major tag moves forward with every release. Now it does.
+  major-tag:
+    needs: publish
+    # Its own job because permissions are per job and there is no step level
+    # scope. A step at the end of publish would leave contents: write live during
+    # an unpinned pip install and a third party upload action. A job also shows
+    # as run or skipped in the run graph, where a step's if does not.
+    permissions:
+      contents: write
+    # A dispatch runs from a branch, where GITHUB_REF_NAME is a branch name, and
+    # a branch called v0.5-prep strips to v0 exactly as a tag does. Without this
+    # the Marketplace would be pointed at an unreleased commit.
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # No checkout. The API takes a SHA, so there is no clone and no question
+      # about what a shallow fetch would let git push. This is the command that
+      # has been run by hand after every release, which is the only version known
+      # to work against this repository.
+      - name: Point the major tag at this release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          major="${GITHUB_REF_NAME%%.*}"   # v0.4.0 -> v0, v1.0.0 -> v1
+          # PATCH cannot create, and the first v1.0.0 derives a v1 that has never
+          # existed. The POST is that one release.
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$major" \
+            -f sha="$GITHUB_SHA" -F force=true ||
+            gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" \
+              -f ref="refs/tags/$major" -f sha="$GITHUB_SHA"
+          echo "$major now points at $GITHUB_SHA"
