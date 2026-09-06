@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img"
-     aria-label="geo-check. Is your site reachable and readable by AI crawlers? The New York Times scores 56 out of 100 on Access, grade D, and 82.5 out of 100 on Readability, grade B.">
+     aria-label="geo-check. Is your site reachable and readable by AI crawlers? The New York Times scores 67.2 out of 100 on Access, grade C, and 82.5 out of 100 on Readability, grade B.">
   <title>geo-check</title>
 
   <defs>
@@ -34,12 +34,12 @@
     <rect x="0" y="0" width="240" height="250" rx="18" fill="#111c30" stroke="#1e293b" stroke-width="2"/>
     <text class="sans" x="28" y="48" font-size="16" letter-spacing="2" fill="#94a3b8">ACCESS</text>
     <rect x="172" y="26" width="44" height="32" rx="9" fill="#f59e0b" opacity="0.16"/>
-    <text class="mono" x="194" y="50" font-size="21" font-weight="700" fill="#f59e0b" text-anchor="middle">D</text>
-    <text class="mono" x="28" y="146" font-size="82" font-weight="700" fill="#f59e0b">56</text>
-    <text class="mono" x="144" y="146" font-size="28" fill="#64748b">/100</text>
+    <text class="mono" x="194" y="50" font-size="21" font-weight="700" fill="#f59e0b" text-anchor="middle">C</text>
+    <text class="mono" x="28" y="146" font-size="82" font-weight="700" fill="#f59e0b">67</text>
+    <text class="mono" x="144" y="146" font-size="28" fill="#64748b">.2/100</text>
     <rect x="28" y="178" width="184" height="9" rx="4.5" fill="#1e293b"/>
-    <rect x="28" y="178" width="103" height="9" rx="4.5" fill="#f59e0b"/>
-    <text class="sans" x="28" y="214" font-size="15" fill="#64748b">3 of 6 citation</text>
+    <rect x="28" y="178" width="124" height="9" rx="4.5" fill="#f59e0b"/>
+    <text class="sans" x="28" y="214" font-size="15" fill="#64748b">5 of 11 citation</text>
     <text class="sans" x="28" y="234" font-size="15" fill="#64748b">crawlers allowed</text>
   </g>
 
@@ -56,6 +56,6 @@
     <text class="sans" x="28" y="234" font-size="15" fill="#64748b">easy to quote</text>
   </g>
 
-  <text class="sans" x="690" y="448" font-size="17" fill="#64748b">The same site, nytimes.com. An average of 69</text>
+  <text class="sans" x="690" y="448" font-size="17" fill="#64748b">The same site, nytimes.com. An average of 75</text>
   <text class="sans" x="690" y="472" font-size="17" fill="#64748b">would describe neither half of it.</text>
 </svg>
