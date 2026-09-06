@@ -12,7 +12,9 @@ import httpx
 import pytest
 
 from geo_check.cli import _at_least_one, _ready
-from geo_check.fetch import _name_does_not_resolve, fetch
+from geo_check.fetch import FetchResult, _name_does_not_resolve, _pause_for, fetch
+
+URL = "https://example.pt/"
 
 
 def test_a_colon_in_the_domain_is_reported_and_not_raised():
@@ -79,3 +81,40 @@ def test_a_body_bigger_than_the_ceiling_stops_being_read(monkeypatch):
     assert result.truncated is True
     assert 1000 <= len(result.text) < 2000, len(result.text)
     assert served < 50, f"the whole megabyte was pulled before the cap applied ({served})"
+
+
+def test_the_backoff_honours_retry_after_and_distrusts_it(monkeypatch):
+    """CLAUDE.md tells the story this function came from and nothing tested it.
+
+    Forty Shopify storefronts behind Cloudflare, eight at a time, and every one
+    answered 429 for the next half hour, including one that had answered 200 an
+    hour earlier. Half a second was the insult that caused it. The rule that came
+    out of that had no test, so nothing would notice it being tuned back.
+    """
+    monkeypatch.setattr("geo_check.fetch.time.sleep", lambda _: None)
+
+    def result(status, **headers):
+        return FetchResult(url=URL, final_url=URL, status=status, headers=headers)
+
+    # A server naming a delay is obeyed rather than second guessed.
+    assert _pause_for(result(429, **{"retry-after": "5"}), 0) == 5.0
+
+    # And not obeyed past the point where waiting stops being politeness. Half a
+    # day from a hostile or broken header would hang the run.
+    assert _pause_for(result(503, **{"retry-after": "99999"}), 0) == 120.0
+
+    # A 429 without a header waits twenty seconds, not the ordinary half second,
+    # and lengthens on the second attempt.
+    assert _pause_for(result(429), 0) == 20.0
+    assert _pause_for(result(429), 1) == 40.0
+
+    # Any other retryable status keeps the short backoff.
+    assert _pause_for(result(503), 0) == 0.5
+
+    # Retry-After also comes as an HTTP date, which isdigit rejects. That falls
+    # through to the status based wait rather than to zero, which is the safe
+    # direction, and it is written down here because it is not obvious from the
+    # code that this case was considered.
+    http_date = {"retry-after": "Wed, 21 Oct 2026 07:28:00 GMT"}
+    assert _pause_for(result(429, **http_date), 0) == 20.0
+    assert _pause_for(result(503, **http_date), 0) == 0.5

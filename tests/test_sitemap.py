@@ -62,14 +62,35 @@ def test_malformed_xml_returns_nothing_instead_of_raising():
 
 
 def test_external_entities_are_not_resolved():
-    """A sitemap is an untrusted file from an arbitrary host."""
-    hostile = (
+    """A sitemap is an untrusted file from an arbitrary host.
+
+    This used to point an entity at file:///etc/passwd and assert that "root:"
+    did not come back. On Windows that path never resolves whatever the parser
+    is told, so the assertion passed with resolve_entities=True as readily as
+    with False, on the machine where the suite is usually run. An internal
+    entity has no filesystem in it, so it separates the two settings anywhere.
+
+    SECURITY.md also promises no outbound request, which _PARSER carries as
+    no_network=True. That one is not tested here because it cannot be observed:
+    with entities unresolved nothing is ever fetched, so the flag behind it
+    makes no difference either way. Writing a test that passes whichever way the
+    flag is set would say the promise is covered when it is not.
+    """
+    declared = (
         '<?xml version="1.0"?>'
-        '<!DOCTYPE urlset [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>'
-        "<urlset><url><loc>&xxe;</loc></url></urlset>"
+        '<!DOCTYPE urlset [<!ENTITY marker "https://example.pt/expanded">]>'
+        "<urlset><url><loc>&marker;</loc></url></urlset>"
     )
-    pages, _ = parse_sitemap(hostile)
-    assert pages == [] or all("root:" not in page for page in pages)
+    pages, _ = parse_sitemap(declared)
+    assert pages == [], f"the entity expanded, so resolve_entities is not off: {pages}"
+
+    # And the same document with the entity written out is read normally, which
+    # is what says the empty result above came from the entity and not from the
+    # parser refusing the doctype outright.
+    inline = (
+        '<?xml version="1.0"?><urlset><url><loc>https://example.pt/expanded</loc></url></urlset>'
+    )
+    assert parse_sitemap(inline)[0] == ["https://example.pt/expanded"]
 
 
 def test_sampling_is_stable_across_runs():
