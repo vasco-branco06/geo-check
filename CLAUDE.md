@@ -178,6 +178,40 @@ summary box. The shapes come from the extractable content patterns in the `aeo`
 skill. The check reads markup, so it can see an ordered list of five steps and
 cannot see whether the steps are any good. The report says exactly that.
 
+**The version is derived, never written down twice.** `fetch.py` builds the user
+agent from `__version__`, and a test binds `__version__` to `pyproject.toml`. It
+was hardcoded once and said `geo-check/0.1` for three releases while every JSON
+report said 0.4.0, so the same run told the reader one version and the audited
+site another. `SECURITY.md` promises that string identifies the tool honestly.
+Do not reintroduce a literal version anywhere.
+
+**The major tag moves from the release workflow.** `README.md` hands people
+`geo-check@v0` and `action.yml` installs the code at whatever ref they pinned, so
+`v0` is the version most users actually run. It was moved by hand until once
+nobody did, and it served the Marketplace a `USER_AGENT` carrying an old account
+name for seven commits. `release.yml` has a `major-tag` job, gated on the publish
+succeeding and on the ref being a tag, because a dispatch from a branch named
+`v0.5-prep` strips to `v0` exactly as `v0.4.0` does. It guarantees that `v0`
+follows the commit whose wheel reached PyPI, and nothing more: `ci.yml` never
+runs on tags and `needs` does not cross workflows, so CI coverage comes from the
+habit of cutting tags on `main`. `tests/test_release_workflow.py` fails if the
+job goes, if the write permission moves onto `publish`, or if either gate drops.
+
+**A figure this repository publishes has to be recomputable from a file it
+ships, or it does not get published.** This is the rule behind the generators,
+the `--check` modes and `tests/test_published_numbers.py`, and it is what four
+separate public drifts in one week bought. It cuts both ways: the exact test
+count came out of the README rather than being corrected, because it changes on
+every commit and pinning it costs a subprocess in every run for a number nobody
+acts on. A number that cannot be cheaply recomputed is either dated in place, as
+the frozen 0.2.0 before-and-after figures are, or left out.
+
+A test that cannot fail is worse than no test, because it reports a promise as
+covered. The entity test asserted that `root:` did not come back from
+`file:///etc/passwd`, which passes on Windows however the parser is configured.
+`no_network=True` is deliberately left untested for the same reason and the
+docstring says so.
+
 ## Out of scope for v1
 
 CDN or WAF level blocking detection. Real JavaScript rendering. Measuring actual

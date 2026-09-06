@@ -295,6 +295,45 @@ says a slow drip of a very large body cannot exhaust memory. `MAX_BYTES` was in
 counts how many the server was asked for, because a cap applied after reading
 everything would satisfy a shorter test and none of the promise.
 
+**Two things were wrong rather than at risk.** The user agent said
+`geo-check/0.1` on every request while the package reported 0.4.0 inside every
+report it wrote, three releases apart, so the same run told the reader one
+version and the site it was auditing another. And the README's own table of
+parsing defects said `User-agent: bot` would have blocked six citation crawlers,
+when `GPTBot` is a training crawler and it is five. `fetch.py` derives the string
+now and a test binds `__version__` to `pyproject.toml`; the crawler count is
+counted from `agents.json`.
+
+**The `v0` tag moved by hand and the workflow claimed otherwise.**
+`release.yml` has said since the first publish that the major tag moves forward
+with every release. Nothing performed it, and it had already drifted seven
+commits while serving the Marketplace a `USER_AGENT` with the old account name.
+A job does it now, gated on the publish succeeding and on the ref being a tag,
+because a `workflow_dispatch` from a branch named `v0.5-prep` strips to `v0`
+exactly as `v0.4.0` does. What it guarantees is that `v0` follows the commit
+whose wheel reached PyPI. It does not guarantee that commit passed CI, because
+`ci.yml` never runs on tags and `needs` does not cross workflows, and that gap is
+written down rather than covered by a second sentence nothing performs.
+
+**The test count is gone rather than corrected.** It said 189 against 198
+collected, having been reconciled by hand seven tests earlier. A number that
+changes on every commit costs either a subprocess in every run or a conftest hook
+with subtle ordering, so what the README states now is what does not churn.
+
+**Two tests could not fail.** The entity test pointed at `file:///etc/passwd` and
+asserted `root:` did not come back, which passes on Windows however the parser is
+configured. An internal entity separates the settings anywhere. `no_network=True`
+stays untested on purpose and the docstring says why: with entities unresolved
+nothing is fetched, so a test of it would pass either way, and writing one would
+report the promise as covered when it is not. `_pause_for`, which carries the
+twenty second backoff learned from a whole CDN answering 429, had no test at all.
+
+**And around thirty published figures now recompute.** The abort breakdown, the
+agreement rates, the 710 hashed domains, the block and JavaScript calibrations.
+All correct, all read from committed files, none of them ever compared to the
+prose beside them. These read what ships rather than the recordings, so unlike
+the corpus tests they run in CI.
+
 ## Open items
 
 - **Rename the working directory** from `geo-audit` to `geo-check`. Breaks the
